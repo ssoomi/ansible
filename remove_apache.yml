@@ -23,4 +23,7 @@
       name: mc
       state: absent
 
-
+  - name: remove tmux
+    apt:
+      name: tmux
+      state: absent
