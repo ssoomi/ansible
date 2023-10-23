@@ -18,3 +18,9 @@
       name: libapache2-mod-php
       state: absent
 
+  - name: remove midnight commandor
+    apt:
+      name: mc
+      state: absent
+
+
