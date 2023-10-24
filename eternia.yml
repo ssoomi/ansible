@@ -47,6 +47,10 @@
           - vim
           - git
           - ufw
+          - apache2
+          - libapache2-mod-php
+          - mc
+          - tmux
         state: latest
         update_cache: true
 
