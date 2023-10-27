@@ -1,0 +1,14 @@
+---
+- name: Update and Upgrade Debian 12
+  hosts: all
+  become: yes
+  tasks:
+    - name: Update package cache
+      apt:
+        update_cache: yes
+
+    - name: Upgrade all packages
+      apt:
+        upgrade: safe
+        autoremove: yes
+        autoclean: yes
