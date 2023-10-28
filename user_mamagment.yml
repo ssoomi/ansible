@@ -1,0 +1,15 @@
+---
+- name: User Management
+  hosts: admin_server
+  tasks:
+    - name: Add a new user
+      user:
+        name: johndoe
+        password: "{{ 'mysecurepassword' | password_hash('sha512') }}"
+      become: yes
+
+    - name: Add user to sudoers
+      copy:
+        content: 'johndoe ALL=(ALL:ALL) ALL'
+        dest: /etc/sudoers.d/johndoe
+      become: yes

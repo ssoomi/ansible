@@ -1,6 +1,6 @@
 ---
 - name: Extract System Information
-  hosts: 192.168.10.40
+  hosts: all
   gather_facts: yes
   tasks:
     - name: Display OS Release
