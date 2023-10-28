@@ -1,0 +1,16 @@
+---
+- name: Update CentOS Stream to version 9
+  hosts: 192.168.10.40
+  become: yes  # You may need to run this playbook with sudo privileges
+
+  tasks:
+    - name: Update all packages
+      yum:
+        name: '*'
+        state: latest
+      notify:
+        - Reboot
+
+  handlers:
+    - name: Reboot
+      reboot:
