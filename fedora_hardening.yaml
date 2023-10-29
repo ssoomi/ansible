@@ -1,0 +1,78 @@
+---
+- hosts: 192.168.10.5
+  become: yes
+  vars:
+    created_username: midnight
+
+  tasks:
+    - name: Install sudo package
+      package:
+        name: sudo
+        state: latest
+
+    - name: Setup passwordless sudo
+      lineinfile:
+        path: /etc/sudoers
+        state: present
+        regexp: '^%wheel'
+        line: '%wheel ALL=(ALL) NOPASSWD: ALL'
+        validate: '/usr/sbin/visudo -cf %s'
+
+    - name: Create a new regular user with sudo privileges
+      user:
+        name: "{{ created_username }}"
+        state: present
+        groups: wheel
+        append: yes
+        create_home: yes
+
+    - name: Set authorized key for remote user
+      authorized_key:
+        user: "{{ created_username }}"
+        state: present
+        key: "{{ lookup('file', lookup('env','HOME') + '/.ssh/ansible.pub') }}"
+
+    - name: Disable root login via SSH
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        state: present
+        regexp: '^#?PermitRootLogin'
+        line: 'PermitRootLogin without-password'
+      notify:
+  handlers:
+    - name: restart sshd
+      service:
+        name: sshd
+        state: restarted
+
+    - name: Update package cache
+      yum:
+        name: '*'
+        state: latest
+      ignore_errors: yes
+      register: package_update_result
+
+    - name: Install packages
+      yum:
+        name:
+          - curl
+          - vim
+          - git
+          - firewalld
+          - httpd
+          - php
+          - mc
+          - tmux
+        state: present
+      when: package_update_result.failed == false
+
+    - name: FW - Allow SSH connections
+      firewalld:
+        service: ssh
+        permanent: yes
+        state: enabled
+
+    - name: FW - Enable and deny by default
+      firewalld:
+        state: enabled
+        immediate: yes

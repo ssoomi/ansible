@@ -1,0 +1,97 @@
+# /etc/ssh/sshd_config
+
+# CIS Benchmark for Amazon Linux 2 - Level 1
+
+# Disable root login
+PermitRootLogin no
+
+# Set SSH protocol version 2
+Protocol 2
+
+# Set SSH port (Change to a non-default port if desired)
+Port 22
+
+# Only allow specific users to log in
+AllowUsers admin
+# Replace 'admin' with the username you want to allow
+
+# Disable password-based authentication (use SSH keys instead)
+PasswordAuthentication no
+
+# Set login grace time
+LoginGraceTime 60
+
+# Limit the number of concurrent unauthenticated connections
+MaxStartups 10:30:60
+
+# Limit SSH access to specific IP addresses or networks
+AllowUsers admin
+# Replace 'admin' with the username you want to allow
+
+# Set SSH banner message (replace with your organization's message)
+Banner /etc/issue
+
+# Set Idle Timeout
+ClientAliveInterval 300
+ClientAliveCountMax 0
+
+# Disable empty passwords
+PermitEmptyPasswords no
+
+# Allow only strong ciphers, key exchange methods, and MACs
+Ciphers aes256-ctr
+KexAlgorithms diffie-hellman-group-exchange-sha256
+MACs hmac-sha2-512,hmac-sha2-256
+
+# Set a rekey limit for data encryption
+RekeyLimit 1G
+
+# Disable X11 forwarding (unless needed)
+X11Forwarding no
+
+# Limit user shell sessions
+UsePAM yes
+
+# Set a rekey limit for data encryption
+RekeyLimit 1G
+
+# Limit the number of authentication retries
+MaxAuthTries 4
+
+# Use privilege separation
+UsePrivilegeSeparation sandbox
+
+# Allow public key authentication
+PubkeyAuthentication yes
+
+# Set a maximum session duration (if needed)
+# MaxSession 1800
+
+# Set a maximum login time (if needed)
+# MaxStartups 50:50:10
+
+# Enable GSSAPI-based authentication (if needed)
+# GSSAPIAuthentication no
+# GSSAPICleanupCredentials no
+
+# Disable DNS-based user mapping (if not needed)
+UseDNS no
+
+# Disable user authentication via host-based authentication
+HostbasedAuthentication no
+
+# Set the number of seconds a client has to authenticate
+LoginGraceTime 60
+
+# Disable privilege separation for root
+PermitRootLogin without-password
+
+# Disable TCP forwarding (if not needed)
+AllowTcpForwarding no
+GatewayPorts no
+
+# Disable banner
+PrintMotd yes
+
+# Set a custom banner message (optional)
+Banner /etc/issue

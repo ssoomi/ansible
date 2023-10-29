@@ -1,0 +1,104 @@
+---
+- name: Harden Amazon Linux 2
+  hosts: 192.168.10.44
+  become: yes
+  tasks:
+    - name: Update the package cache
+      yum:
+        name: '*'
+        state: latest
+      when: ansible_os_family == "RedHat"
+
+    - name: Upgrade all packages
+      yum:
+        name: '*'
+        state: latest
+      when: ansible_os_family == "RedHat"
+
+    - name: Ensure the Amazon Linux 2 system is running the latest kernel
+      command: yum install -y kernel
+      when: ansible_os_family == "RedHat"
+
+    - name: Set up automatic security updates
+      package:
+        name: unattended-upgrades
+        state: present
+      when: ansible_os_family == "Debian"
+
+    - name: Enable and start the firewall (firewalld)
+      service:
+        name: firewalld
+        state: started
+        enabled: yes
+      when: ansible_os_family == "RedHat"
+
+    - name: Configure the firewall to allow only necessary services
+      firewalld:
+        service: "{{ item }}"
+        state: enabled
+        permanent: yes
+      with_items:
+        - ssh
+        - http
+        - https
+        - ntp
+        - dns
+      when: ansible_os_family == "RedHat"
+
+    - name: Ensure the firewall is active and running
+      firewalld:
+        state: running
+      when: ansible_os_family == "RedHat"
+
+    - name: Disable root SSH login
+      template:
+        src: sshd_config.j2
+        dest: /etc/ssh/sshd_config
+      notify: Restart SSH
+      when: ansible_os_family == "RedHat"
+
+    - name: Set up SSH hardening
+      template:
+        src: sshd_config.j2
+        dest: /etc/ssh/sshd_config
+      notify: Restart SSH
+      when: ansible_os_family == "Debian"
+
+    - name: Create a separate user for administrative tasks
+      user:
+        name: admin
+        shell: /bin/bash
+        groups: wheel
+      when: ansible_os_family == "RedHat"
+
+    - name: Remove unnecessary packages
+      yum:
+        name: "{{ item }}"
+        state: absent
+      with_items:
+        - telnet
+        - ftp
+      when: ansible_os_family == "RedHat"
+
+#    - name: Set a password policy
+#      pam_pwquality:
+#        name: password requisite pam_pwquality.so retry=3
+#        minlen: 14
+#        minclass: 3
+#        minrepeat: 3
+#        maxrepeat: 3
+#        minsequence: 5
+#      when: ansible_os_family == "RedHat"
+
+    - name: Enable SELinux
+      selinux:
+        policy: targeted
+        state: enforcing
+      when: ansible_os_family == "RedHat"
+
+  handlers:
+    - name: Restart SSH
+      service:
+        name: sshd
+        state: restarted
+
