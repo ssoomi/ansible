@@ -1,0 +1,11 @@
+---
+- name: Install Neofetch
+  hosts: all
+  become: yes  # Use become to run tasks with sudo privileges
+
+  tasks:
+    - name: Install Neofetch
+      package:
+        name: neofetch
+        state: present
+

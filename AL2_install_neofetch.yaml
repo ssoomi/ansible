@@ -1,0 +1,18 @@
+---
+- name: Install Neofetch
+  hosts: 192.168.10.44
+  become: yes
+  tasks:
+    - name: Download Neofetch source code
+      get_url:
+        url: https://github.com/dylanaraps/neofetch/archive/master.zip
+        dest: /tmp/neofetch-master.zip
+
+    - name: Unzip Neofetch source code
+      command: unzip /tmp/neofetch-master.zip -d /tmp/
+      args:
+        creates: /tmp/neofetch-master
+
+    - name: Change to Neofetch directory
+      command: chdir=/tmp/neofetch-master make install
+

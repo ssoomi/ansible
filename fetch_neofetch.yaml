@@ -1,0 +1,11 @@
+---
+- name: Fetch Neofetch
+  hosts: all
+  become: yes  # To run commands with superuser privileges, if needed
+  tasks:
+    - name: Run Neofetch
+      command: neofetch
+      register: neofetch_output
+    - name: Display Neofetch Output
+      debug:
+        var: neofetch_output.stdout_lines
