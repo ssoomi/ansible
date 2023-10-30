@@ -1,0 +1,21 @@
+---
+- name: Extract Disk Space and Memory Information
+  hosts: all
+  tasks:
+    - name: Retrieve Disk Space
+      command: df -h
+      register: df_output
+      become: yes  # Use 'become' if you need to run the command as a privileged user (e.g., sudo)
+
+    - name: Retrieve Memory Information
+      command: free -h
+      register: free_output
+      become: yes  # Use 'become' if you need to run the command as a privileged user (e.g., sudo)
+
+    - name: Display Disk Space Information
+      debug:
+        msg: "{{ df_output.stdout_lines }}"
+
+    - name: Display Memory Information
+      debug:
+        msg: "{{ free_output.stdout_lines }}"
