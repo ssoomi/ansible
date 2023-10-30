@@ -1,0 +1,10 @@
+---
+- name: Install example-package
+  hosts: all
+  become: yes
+
+  tasks:
+    - name: Install example-package
+      package:
+        name: bpytop
+        state: present
