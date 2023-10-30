@@ -1,0 +1,8 @@
+---
+- name: Run System Updates
+  hosts: 192.168.10.45
+  tasks:
+    - name: Update system
+      pacman:
+        upgrade: yes
+      become: yes
