@@ -1,0 +1,49 @@
+---
+- name: Harden Amazon Linux 2
+  hosts: 192.168.10.44
+  become: yes
+
+  tasks:
+    - name: Update all packages
+      yum:
+        name: '*'
+        state: latest
+      become: yes
+
+    - name: Configure the firewall
+      firewalld:
+        service: '{{ item }}'
+        permanent: yes
+        state: enabled
+      loop:
+        - ssh
+        - http
+        - https
+
+    - name: Install the EPEL repository using amazon-linux-extras
+      command: amazon-linux-extras install epel -y
+
+    - name: Install and configure fail2ban
+      yum:
+        name: fail2ban
+        state: present
+      become: yes
+      notify: restart fail2ban
+
+    - name: Copy fail2ban configuration
+      template:
+        src: fail2ban.j2
+        dest: /etc/fail2ban/jail.d/your_jail.local
+      become: yes
+      notify: restart fail2ban
+
+    - name: Ensure SELinux is in enforcing mode
+      selinux:
+        policy: targeted
+        state: enforcing
+
+  handlers:
+    - name: restart fail2ban
+      service:
+        name: fail2ban
+        state: restarted
