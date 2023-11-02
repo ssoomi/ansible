@@ -1,0 +1,27 @@
+---
+# playbook to setup folder structures for new project.
+
+- name: prompt for project / Foldername
+  hosts: localhost
+  vars:
+    directory: /home/eternia/ansible/
+
+  vars_prompt:
+
+    - name: project
+      prompt: Name of the Project/Customer?
+      private: no
+
+  tasks:
+
+  - name: Create Project Directory and Group Vars Folder
+    file:
+      path: "{{directory}}/{{ project }}/group_vars"
+      state: directory
+    delegate_to: localhost
+
+  - name: Copy ansible.cfg
+    copy:
+      src: "{{ directory }}/ansible.cfg"
+      dest: "{{ directory }}/{{ project }}/ansible.cfg"
+    delegate_to: localhost
