@@ -25,3 +25,9 @@
       src: "{{ directory }}/ansible.cfg"
       dest: "{{ directory }}/{{ project }}/ansible.cfg"
     delegate_to: localhost
+
+  - name: Copy inventory
+    copy:
+      src: "{{ directory }}/inventory"
+      dest: "{{ directory }}/{{ project }}/inventory"
+    delegate_to: localhost
